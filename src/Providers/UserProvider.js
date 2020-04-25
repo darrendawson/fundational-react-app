@@ -20,11 +20,11 @@ class UserProvider extends Component {
         profileIcon: "",
         businessIDs: []
       };
-
+      var that = this;
       firebase.database().ref('users/' + userAuth.uid).once('value').then(function(snapshot) {
-        user.displayName = (snapshot.val() && snapshot.val().displayName) || 'Anonymous';
+        user = snapshot.val();
+        that.setState({ authUser: userAuth, user: user });
       })
-      this.setState({ authUser: userAuth, user: user });
     });
   };
 

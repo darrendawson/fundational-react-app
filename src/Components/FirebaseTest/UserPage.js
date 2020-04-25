@@ -1,46 +1,51 @@
 import React from "react";
 import './UserPage.css';
 
-import firebase from '../../firebase.js';
+import firebase, { storage } from '../../firebase.js';
 import { UserConsumer } from "../../Providers/UserProvider.js";
 
 class UserPage extends React.Component {
   constructor() {
     super();
-    this.state = {};
-    this.changeUserName = this.changeUserName.bind(this);
+    this.state = {
+      displayName: '',
+      iconAsFile: ''
+    };
+
+    this.changeDisplayName = this.changeDisplayName.bind(this);
     this.updateProfile = this.updateProfile.bind(this);
+    this.changeProfileIcon = this.changeProfileIcon.bind(this);
   }
 
-  changeUserName(e) {
-    console.log(e.target.value);
-
-    const userRef = firebase.database().ref('users');
-    userRef.on('value', (snapshot) => {
-      let items = snapshot.val();
-      let newState = [];
-      for (let item in items) {
-        newState.push({
-          id: item,
-          title: items[item].title,
-          user: items[item].user
-        });
-      }
-      this.setState({
-        items: newState
-      });
-    });
+  changeDisplayName(e) {
+    this.setState({displayName: e.target.value});
   }
 
   updateProfile(e, context) {
     e.preventDefault();
-    console.log(e);
+    console.log(e, this.state);
     firebase.database().ref('users/' + context.authUser.uid).set({
-      displayName: "value",
-      email: "email",
-      profile_picture : "imageUrl"
+      displayName: this.state.displayName,
+      profileIcon : this.state.profileIcon
     });
   }
+
+  changeProfileIcon(e, context) {
+    const ref = firebase.storage().ref();
+    const file = e.target.files[0]
+    const name = context.authUser.uid;
+    const metadata = {
+      contentType: file.type
+    };
+    const task = ref.child(name).put(file, metadata);
+    var that = this;
+    task.then(snapshot => snapshot.ref.getDownloadURL())
+    .then((url) => {
+      console.log(url);
+      that.setState({ profileIcon: url });
+    }).catch(console.error);
+  }
+
 
   render() {
     return (
@@ -50,14 +55,15 @@ class UserPage extends React.Component {
               {
                 context.authUser ?
                 <div>
-                  <img src={context.authUser.photoURL}/>
+                  <img src={context.user.profileIcon || context.authUser.photoURL}/>
                   <h3>{context.authUser.uid}</h3>
-                  <input type="text" name="displayName" value={context.authUser.displayName} onChange={this.changeUserName} />
                   <div>
                     { context.user.displayName }
                   </div>
+                  <img id="someImageTagId" src={this.state.profileIcon} />
                   <form onSubmit={(e) => this.updateProfile(e, context)}>
-                    <input type="text" name="displayName" placeholder="Display Name" />
+                    <input type="text" name="displayName" onChange={this.changeDisplayName} value={this.state.displayName} placeholder="Display Name" />
+                    <input id="profileUpload" type="file" onChange={(e) => this.changeProfileIcon(e, context)} />
                     <button>Submit</button>
                   </form>
                 </div>
