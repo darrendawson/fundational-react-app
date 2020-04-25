@@ -1,30 +1,36 @@
 import React, { Component, createContext } from "react";
-import { auth } from "../firebase";
+import firebase, { auth } from "../firebase";
 
 const { Provider, Consumer } = React.createContext();
 
 class UserProvider extends Component {
   state = {
-    user: null
+    authUser: null,
+    user: {
+      displayName: "",
+      profileIcon: "",
+      businessIDs: []
+    }
   };
 
   componentDidMount() {
     auth.onAuthStateChanged(userAuth => {
-      this.setState({ user: userAuth});
-    });
-  };
-
-  toggleTheme = () => {
-    this.setState(prevState => {
-      return {
-        theme: prevState.theme === "Day" ? "Night" : "Day"
+      var user = {
+        displayName: "",
+        profileIcon: "",
+        businessIDs: []
       };
+
+      firebase.database().ref('users/' + userAuth.uid).once('value').then(function(snapshot) {
+        user.displayName = (snapshot.val() && snapshot.val().displayName) || 'Anonymous';
+      })
+      this.setState({ authUser: userAuth, user: user });
     });
   };
 
   render() {
     return (
-      <Provider value={{ user: this.state.user }}>
+      <Provider value={{ authUser: this.state.authUser, user: this.state.user }}>
         {this.props.children}
       </Provider>
     );

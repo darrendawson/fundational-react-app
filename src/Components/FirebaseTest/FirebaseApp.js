@@ -35,8 +35,6 @@ class FirebaseApp extends React.Component {
     });
   }
 
-
-
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
       if(user) {
