@@ -1,15 +1,16 @@
 import React from 'react';
 import './FirebaseApp.css';
 
+import { UserProvider } from "../../Providers/UserProvider.js";
 import firebase, { auth, provider } from '../../firebase.js';
-
+import UserPage from "./UserPage.js";
 class FirebaseApp extends React.Component {
 
   constructor() {
     super();
     this.state = {
-      list: [{id: 1}, {id: 2}, {id: 3}],
-      user: null
+      user: null,
+      username: ""
     };
 
     this.testSubmit = this.testSubmit.bind(this);
@@ -74,26 +75,20 @@ class FirebaseApp extends React.Component {
 
   render() {
     return (
-      <div id="FirebaseApp">
-        <div className="wrapper">
-          {this.state.user ?
-            <button onClick={this.logout}>Log Out</button>
-            :
-            <button onClick={this.login}>Log In</button>
-          }
-        </div>
+      <UserProvider>
+        <div id="FirebaseApp">
+          <div className="wrapper">
+            {this.state.user ?
+              <button onClick={this.logout}>Log Out</button>
+              :
+              <button onClick={this.login}>Log In</button>
+            }
+          </div>
 
-        <button onClick={this.testSubmit}>this is a test</button>
-        <ul>
-          { this.state.list.map((item) => {
-            return (
-              <li key={item.id}>
-                entry {item.id}
-              </li>
-            )
-          })}
-        </ul>
-      </div>
+          <button onClick={this.testSubmit}>this is a test</button>
+          <UserPage />
+        </div>
+      </UserProvider>
     );
   }
 
