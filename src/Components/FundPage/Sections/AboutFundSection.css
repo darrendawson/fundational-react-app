@@ -8,6 +8,7 @@
 #AboutFundSection #cover_photo {
   width: 100%;
   border-bottom: 1px solid lightgrey;
+  margin-bottom: 15px;
 }
 
 #AboutFundSection #donate_box {
@@ -41,7 +42,7 @@
 #AboutFundSection #tags_container {
   width: 100%;
   display: flex;
-  margin-top: 10px;
+  margin-top: 7px;
 }
 
 #AboutFundSection #tags_container #tag {

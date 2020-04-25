@@ -4,6 +4,7 @@ import './App.css';
 
 import WorkingData from './WorkingData.js';
 
+import Navbar from './Components/Navbar/Navbar.js';
 import FundPage from './Components/FundPage/FundPage.js';
 
 class App extends React.Component {
@@ -42,6 +43,9 @@ class App extends React.Component {
   render() {
     return (
       <div id="App">
+        <div id="navbar_container">
+          <Navbar/>
+        </div>
         <div id="website_content">
           {this.renderPage()}
         </div>

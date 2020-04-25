@@ -1,0 +1,24 @@
+#Navbar {
+  width: calc(100% - 40px);
+  border-bottom: 1px solid black;
+  height: calc(100% - 1px);
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 20px;
+}
+
+#Navbar .navbar_title {
+  margin: 0px;
+  padding: 0px;
+  cursor: pointer;
+}
+
+#Navbar .link_spacing {
+  margin: 0px 10px;
+}
+
+#Navbar .links_container {
+  display: flex;
+}
