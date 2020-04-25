@@ -13,9 +13,36 @@ class FirebaseApp extends React.Component {
     };
 
     this.testSubmit = this.testSubmit.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
+  logout() {
+    auth.signOut().then(() => {
+      this.setState({
+        user: null
+      });
+    });
+  }
+
+  login() {
+    auth.signInWithPopup(provider).then((result) => {
+      const user = result.user;
+      this.setState({
+        user
+      });
+    });
+  }
+
+
+
   componentDidMount() {
+    auth.onAuthStateChanged((user) => {
+      if(user) {
+        this.setState({ user });
+      }
+    });
+
     const itemsRef = firebase.database().ref('items');
     itemsRef.on('value', (snapshot) => {
       let items = snapshot.val();
@@ -48,6 +75,14 @@ class FirebaseApp extends React.Component {
   render() {
     return (
       <div id="FirebaseApp">
+        <div className="wrapper">
+          {this.state.user ?
+            <button onClick={this.logout}>Log Out</button>
+            :
+            <button onClick={this.login}>Log In</button>
+          }
+        </div>
+
         <button onClick={this.testSubmit}>this is a test</button>
         <ul>
           { this.state.list.map((item) => {
