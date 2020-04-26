@@ -3,7 +3,6 @@ import logo from './logo.svg';
 import './App.css';
 
 import WorkingData from './WorkingData.js';
-
 import FirebaseApp from './Components/FirebaseTest/FirebaseApp.js';
 
 import Navbar from './Components/Navbar/Navbar.js';
@@ -19,6 +18,7 @@ class App extends React.Component {
       users: fakeData.getUsers(),
       transactions: fakeData.getTransactions(),
 
+      selectedPage: '',
       selectedUserID: 'test'
     };
   }
