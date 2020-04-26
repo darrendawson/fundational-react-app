@@ -59,6 +59,38 @@ class SearchPage extends React.Component {
     )
   }
 
+
+  renderFundsNoSearch = () => {
+    if (this.state.query.length > 3) { return; }
+    let toRender = [];
+    let i = 0;
+    for (let key in this.props.funds) {
+      let fund = this.props.funds[key];
+      if (i == 0) {
+        toRender.push(<h1 style={{'width': '100%'}}>Small Businesses</h1>)
+      } else if (i == 12) {
+        toRender.push(<h1 style={{'width': '100%'}}>Community Funds</h1>)
+      } else if (i == 24) {
+        toRender.push(<h1 style={{'width': '100%'}}>Trending!</h1>)
+      }
+
+      toRender.push(
+        <div id="fund_card" onClick={() => this.onClick_selectFund(fund.id)}>
+          <img id="img" src={fund.cover_photo_url}/>
+          <h3>{fund.title}</h3>
+          <p className="color_txt_not_focus">{fund.address}</p>
+        </div>
+      );
+      i += 1;
+    }
+    return (
+      <div id="fund_cards_container">
+        {toRender}
+      </div>
+    );
+  }
+
+
   render() {
     let funds = [];
     for(let fundID in this.props.funds) {
@@ -91,6 +123,7 @@ class SearchPage extends React.Component {
             return this.renderFund(fund);
           })}
         </ul>
+        {this.renderFundsNoSearch()}
       </div>
     );
   }
