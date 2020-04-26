@@ -1,0 +1,102 @@
+{
+    "users": {
+        "userID": {
+            "displayName": "",
+            "profileIcon": "",
+            "location": "",
+            "occupation": "",
+            "advocateID": false,
+            "receivingFundsIDs": {
+                "fundID": true
+            },
+            "businessIDs": {
+                "businessID": true
+            },
+            "messages": {
+                "responses": {
+                    "transactionID": true
+                },
+                "contributions": {
+                    "transactionID": true
+                }
+            }
+        }
+    },
+    "advocates": {
+        "advocateID": {
+            "userID": "",
+            
+            "displayName": "",
+            "profileIcon": "",
+            "profileBanner": "",
+            "description": "",
+            "location": "",
+            "businesses": {
+                "businessID": true
+            },
+            "tags": {
+                "tagValue": true
+            },
+            "messages": {
+                "contributions": {
+                    "transactionID": true
+                },
+                "responses": {
+                    "transactionID": true
+                }
+            },
+            "money": 0
+        }
+    },
+    "businesses": {
+        "businessID": {
+            "displayName": "",
+            "profileIcon": "",
+            "profileBanner": "",
+            "description": "",
+            "location": "",
+            "ownerID": "",
+            "communityFund": {
+                "recipientIDs": {
+                    "userID": true
+                },
+                "transactions": {
+                    "transactionID": true
+                }
+            },
+            "tags": {
+                "tagValue": true
+            },
+            "updates": {
+                "updateID": {
+                    "image": "",
+                    "text": "",
+                    "date": ""
+                }
+            },
+            "transactions": {
+                "transactionID": ""
+            }
+        }
+    },
+    "transactions": {
+        "transactionID": {
+            "from": {
+                "accountType": "",
+                "id": "",
+                "memo": ""
+            },
+            "to": {
+                "accountType": "",
+                "id": "",
+                "memo": ""
+            },
+            "money": 0,
+            "date": "",
+            "state": "pending|accepted|rejected"
+        }
+    },
+    "tags": {
+        "tagValue": true
+    }
+}
