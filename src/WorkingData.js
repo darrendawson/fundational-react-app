@@ -661,7 +661,10 @@ class WorkingData {
     let id = this.getNewUniqueID();
     let fundType = (this.__getRandomInt(1, 10) > 5) ? "community fund" : "business";
     let messages = this.createTransactions(id, fundType);
-    let communityFund = this.createFundRecipients(id);
+    let communityFund = {'transactions': {}, 'recipients': {}};
+    if (fundType == "community fund") {
+      communityFund = this.createFundRecipients(id);
+    }
 
     // add community fund transactions to list of total transactions when applicable
     for (let key in communityFund['transactions']) {
@@ -679,7 +682,7 @@ class WorkingData {
     let fundName;
     if (fundType == 'community fund') {
       if (this.__getRandomInt(1, 10) > 7) {
-        fundName = this.__getRandomItem(__communityFundNames);
+        fundName = this.__getRandomItem(__communityFundNames) + " Covid Fund";
       } else {
         fundName = this.__getRandomItem(__businessNames) + " Worker Relief";
       }
