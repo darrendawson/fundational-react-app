@@ -136,7 +136,6 @@ class App extends React.Component {
   getRecipientsOfFund = (fundID) => {
     let users = [];
     for (let userID in this.state.users) {
-      console.log(this.state.users[userID]);
       if (this.state.users[userID]['get_from'].length > 0) {
         if (this.state.users[userID]['get_from'].indexOf(fundID) >= 0) {
           users.push(this.state.users[userID]);

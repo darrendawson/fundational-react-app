@@ -440,6 +440,8 @@ class WorkingData {
     this.transactions = {};
     this.seedUsers(); // <- make sure to seed users before funds
     this.seedFunds();
+
+    console.log(JSON.stringify({funds: this.funds, users: this.users, transactions: this.transactions}));
   }
 
   getFunds() {
@@ -595,7 +597,7 @@ class WorkingData {
     //
     let transactionKeys = {}; // <- maintain a list of keys for firebase
     for (let i = 0; i < transactions.length; i++) {
-      let transactionID = Object.keys(this.transactions).length;
+      let transactionID = transactions[i]['id'];
       transactionKeys[transactionID] = true;
       this.transactions[transactionID] = transactions[i];
     }
