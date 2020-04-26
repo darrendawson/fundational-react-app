@@ -11,10 +11,10 @@ class Navbar extends React.Component {
   render() {
     return (
       <div id="Navbar">
-        <h1 className="navbar_title">F<span id="heart_icon" className="color_txt_primary">&hearts;</span>ndational</h1>
+        <h1 className="navbar_title" onClick={() => this.props.selectPage('search')}>F<span id="heart_icon" className="color_txt_primary">&hearts;</span>ndational</h1>
         <div className="links_container">
-          <h3 className="navbar_title link_spacing">Link1</h3>
-          <h3 className="navbar_title link_spacing">Link2</h3>
+          <h3 className="navbar_title link_spacing" onClick={() => this.props.selectPage('search')}>Browse</h3>
+          <h3 className="navbar_title link_spacing" onClick={() => this.props.selectPage('user')}>Profile</h3>
         </div>
       </div>
     );

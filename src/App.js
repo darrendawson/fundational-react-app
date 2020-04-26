@@ -162,7 +162,7 @@ class App extends React.Component {
 
 
   renderFundPage = () => {
-    let fund = this.state.funds[this.state.selectedFund]; 
+    let fund = this.state.funds[this.state.selectedFund];
     let fundTransactions = this.getAllTransactionsByReceiver(fund.id);
     return (
       <FundPage
@@ -229,7 +229,7 @@ class App extends React.Component {
     return (
       <div id="App">
         <div id="navbar_container">
-          <Navbar/>
+          <Navbar selectPage={this.onClick_selectPage}/>
         </div>
         <div id="website_content">
           {this.renderPage()}
