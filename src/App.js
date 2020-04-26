@@ -18,7 +18,7 @@ class App extends React.Component {
   }
 
   renderFundPage = () => {
-    let fund = this.state.funds[1]; // <- MODIFY THIS TO GET THE SELECTED FUND
+    let fund = this.state.funds[0]; // <- MODIFY THIS TO GET THE SELECTED FUND
     return (
       <FundPage
         title={fund.title}
@@ -30,6 +30,8 @@ class App extends React.Component {
         address={fund.address}
         tags={fund.tags}
         fundOwner={fund.owner_user}
+        transactions={fund.transactions}
+        patrons={fund.patrons}
       />
     );
   }

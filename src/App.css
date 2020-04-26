@@ -13,9 +13,11 @@
   height: 45px;
 }
 #App #website_content {
-  height: 100%;
+  height: calc(100% - 45px);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Font Stuff ----------------------------------------------------------------*/

@@ -34,11 +34,11 @@ class AboutFundSection extends React.Component {
     let renderUserStats = (userDonations, fundName) => {
       if (userDonations.length == 0) {
         return (
-          <p className="medium_text">You have not donated to <span style={{'font-style': 'italic'}}>{fundName}</span> yet</p>
+          <p className="medium_text" style={{'text-align': 'center', 'width': '100%'}}>You have not donated to <span style={{'font-style': 'italic'}}>{fundName}</span> yet</p>
         );
       } else if (userDonations.length == 1) {
         return (
-          <div id="user_stats_container">
+          <div id="user_stats_container" style={{'text-align': 'center', 'width': '100%'}}>
             <p className="medium_text">You have donated <span className="color_txt_primary">once</span> to <span className="italic">{fundName}</span></p>
             <p className="medium_text italic">Total: <span className="color_txt_primary">${userDonations[0]['amount'].toFixed(2)}</span></p>
           </div>
@@ -51,7 +51,7 @@ class AboutFundSection extends React.Component {
         }
 
         return (
-          <div id="user_stats_container">
+          <div id="user_stats_container" style={{'text-align': 'center', 'width': '100%'}}>
             <p className="medium_text">You have donated <span className="color_txt_primary">{userDonations.length}</span> times to <span className="italic">{fundName}</span></p>
             <p className="medium_text italic">Total: <span className="color_txt_primary">${totalAmount.toFixed(2)}</span></p>
           </div>
@@ -72,7 +72,7 @@ class AboutFundSection extends React.Component {
           <ul>
             {(this.props.fundType == "community fund") ? renderStatRow(stats.num_recipients, 'recipients') : null}
             {renderStatRow(stats.num_donors, 'donors')}
-            {renderStatRow('$' + stats.average_donation, 'average donation')}
+            {renderStatRow('$' + stats.average_donation.toFixed(2), 'average donation')}
             {renderStatRow2(stats.past_day.num_donations, 'day', stats.past_day.amount)}
             {renderStatRow2(stats.past_month.num_donations, 'month', stats.past_month.amount)}
           </ul>
