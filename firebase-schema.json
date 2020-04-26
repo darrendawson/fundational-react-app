@@ -1,0 +1,76 @@
+{
+    "users": {
+        "userID": {
+            "displayName": "",
+            "profileIcon": "",
+            "location": "",
+            "occupation": "",
+            "receivingFundsIDs": {
+                "businessID": true
+            },
+            "advocateID": false,
+            "businessIDs": {
+                "businessID": true
+            },
+            "messages": {
+                "responses": {
+                    "transactionID": true
+                },
+                "contributions": {
+                    "transactionID": true
+                }
+            }
+        }
+    },
+    "businesses": {
+        "businessID": {
+            "displayName": "",
+            "profileIcon": "",
+            "profileBanner": "",
+            "description": "",
+            "location": "",
+            "ownerID": "",
+            "communityFund": {
+                "recipientIDs": {
+                    "userID": true
+                },
+                "transactions": {
+                    "transactionID": true
+                }
+            },
+            "tags": {
+                "tagValue": true
+            },
+            "updates": {
+                "updateID": {
+                    "image": "",
+                    "text": "",
+                    "date": ""
+                }
+            },
+            "transactions": {
+                "transactionID": ""
+            }
+        }
+    },
+    "transactions": {
+        "transactionID": {
+            "from": {
+                "accountType": "",
+                "id": "",
+                "memo": ""
+            },
+            "to": {
+                "accountType": "",
+                "id": "",
+                "memo": ""
+            },
+            "money": 0,
+            "date": "",
+            "state": "pending|accepted|rejected"
+        }
+    },
+    "tags": {
+        "tagValue": true
+    }
+}
