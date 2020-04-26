@@ -128,3 +128,11 @@ http://www.colorbox.io/#steps=5#hue_start=164#hue_end=177#hue_curve=easeOutSine#
   background-color: #CAF9EF;
   color: black;
 }
+
+.loss {
+  color: #e23b38;
+}
+
+.gain {
+  color: #5eba25;
+}

@@ -7,6 +7,8 @@ import FirebaseApp from './Components/FirebaseTest/FirebaseApp.js';
 
 import Navbar from './Components/Navbar/Navbar.js';
 import FundPage from './Components/FundPage/FundPage.js';
+import ProfilePage from './Components/ProfilePage/ProfilePage.js';
+
 
 class App extends React.Component {
 
@@ -18,7 +20,7 @@ class App extends React.Component {
       users: fakeData.getUsers(),
       transactions: fakeData.getTransactions(),
 
-      selectedPage: '',
+      selectedPage: 'user', // <- user, fund
       selectedUserID: 'test'
     };
   }
@@ -172,10 +174,29 @@ class App extends React.Component {
     );
   }
 
+  renderUserProfilePage = () => {
+    let user = this.state.users[this.state.selectedUserID];
+    return (
+      <ProfilePage
+        name={user.name}
+        profilePic={user.profile_photo_url}
+        occupation={user.occupation}
+        location={user.location}
+        transactionIDsGainMoney={user.messages.responses}
+        transactionIDsLoseMoney={user.messages.contributions}
+        transactions={this.state.transactions}
+        funds={this.state.funds}
+        users={this.state.users}
+      />
+    );
+  }
+
 
   // MODIFY THIS FUNCTION TO USE THE RIGHT STATE
   renderPage = () => {
-    if (true) {
+    if (this.state.selectedPage == 'user') {
+      return this.renderUserProfilePage();
+    } else if (this.state.selectedPage == 'fund') {
       return this.renderFundPage();
     } else {
       return (

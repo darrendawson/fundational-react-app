@@ -1,0 +1,88 @@
+#ProfilePage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#ProfilePage #col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#ProfilePage .title {
+  margin: 5px;
+}
+
+#ProfilePage #top_container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#ProfilePage #profile_container {
+  width: calc(100% - 40px);
+  border-top: 5px solid #00BDB2;
+  padding: 40px 20px 20px 20px;
+  background-color: #CAF9EF;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#ProfilePage #profile_pic {
+  height: 200px;
+  width: 200px;
+  border-radius: 100px;
+}
+
+
+#ProfilePage #about_container {
+  width: 100%;
+  height: 100px;
+  background-color: #dcf7f1;
+}
+
+
+#ProfilePage #transactions_container {
+  width: 100%;
+}
+
+
+#ProfilePage #transactions_container #transaction {
+  width: calc(100% - 20px);
+  padding: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px;
+  border-bottom: 1px solid #d4d6d4;
+}
+
+#ProfilePage #transaction #transaction_profile_pic {
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+  margin-right: 20px;
+}
+
+#ProfilePage #memo_text {
+  font-size: 0.8em;
+  margin: 3px 0px;
+}
+
+#ProfilePage #transaction #description_container {
+  width: 800px;
+}
+
+#ProfilePage #description_title {
+  margin: 0px;
+}
+
+#ProfilePage #amount_container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 25px;
+}
