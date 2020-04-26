@@ -5,10 +5,10 @@
             "profileIcon": "",
             "location": "",
             "occupation": "",
-            "advocateID": false,
             "receivingFundsIDs": {
-                "fundID": true
+                "businessID": true
             },
+            "advocateID": false,
             "businessIDs": {
                 "businessID": true
             },
@@ -20,32 +20,6 @@
                     "transactionID": true
                 }
             }
-        }
-    },
-    "advocates": {
-        "advocateID": {
-            "userID": "",
-            
-            "displayName": "",
-            "profileIcon": "",
-            "profileBanner": "",
-            "description": "",
-            "location": "",
-            "businesses": {
-                "businessID": true
-            },
-            "tags": {
-                "tagValue": true
-            },
-            "messages": {
-                "contributions": {
-                    "transactionID": true
-                },
-                "responses": {
-                    "transactionID": true
-                }
-            },
-            "money": 0
         }
     },
     "businesses": {
