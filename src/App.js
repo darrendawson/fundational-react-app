@@ -36,6 +36,43 @@ class App extends React.Component {
     this.setState({selectedFund: fundID});
   }
 
+
+  // manipulation --------------------------------------------------------------
+
+  // gets a random String to act as a unique key
+  getNewUniqueID() {
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let newID = "";
+    for (let i = 0; i < 10; i++) {
+      newID += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return newID;
+  }
+
+
+  onClick_makeDonation = (receiverID, receiverType, amount, memo) => {
+    let senderID = this.state.selectedUserID;
+    
+    let newTransaction = {
+      id: this.getNewUniqueID(),
+      destination: {id: receiverID, account_type: receiverType, memo: ""},
+      origin: {id: senderID, account_type: 'user', memo: memo},
+      amount: amount,
+      date: Date.now(),
+      status: 'accepted'
+    };
+    let transactions = this.state.transactions;
+    transactions[newTransaction.id] = newTransaction;
+    this.setState({transactions: transactions});
+
+    // add to sender's account
+    let users = this.state.users;
+    users[senderID]['messages']['contributions'][newTransaction.id] = true;
+
+    // add to receiver's account
+  }
+
+
   // Processing ----------------------------------------------------------------
 
   // both times are unix epoch times (in milliseconds)
@@ -163,6 +200,7 @@ class App extends React.Component {
     let fundTransactions = this.getAllTransactionsByReceiver(fund.id);
     return (
       <FundPage
+        id={fund.id}
         title={fund.title}
         description={fund.description}
         coverPhoto={fund.cover_photo_url}
@@ -175,6 +213,7 @@ class App extends React.Component {
         transactions={fundTransactions}
         patrons={this.getPatronsFromTransactions(fundTransactions)}
         recipients={this.getRecipientsOfFund(fund.id)}
+        makeDonation={this.onClick_makeDonation}
       />
     );
   }

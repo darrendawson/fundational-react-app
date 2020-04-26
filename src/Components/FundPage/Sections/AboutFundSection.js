@@ -5,10 +5,31 @@ class AboutFundSection extends React.Component {
 
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      donateExpanded: false,
+      donationAmount: 0,
+      donationMemo: ""
+    };
+  }
+
+  // Interactions --------------------------------------------------------------
+
+  onInput_donationMemo(e) {
+    this.setState({donateMemo: e.target.value});
+  }
+
+  onInput_donationAmount(e) {
+    this.setState({donateAmount: Number(e.target.value)});
   }
 
 
+  onClick_makeDonation = () => {
+    this.props.makeDonation(this.props.id, this.props.fundType, this.state.donateAmount, this.state.donateMemo)
+    this.setState({donateExpanded: false, donationAmount: 0, donationMemo: ""});
+  }
+
+
+  // render --------------------------------------------------------------------
 
   // renders a snapshot of how many donations / recipients / donors a fund has.
   // also renders the Donate button at the bottom
@@ -60,25 +81,44 @@ class AboutFundSection extends React.Component {
     }
 
     let stats = this.props.atAGlanceStats;
-    return (
-      <div id="donate_box">
-        <div style={{'width': '90%', 'display': 'flex', 'flex-direction': 'column'}}>
-          <button className="medium_button color_bg_primary">Donate!</button>
+
+    if (this.state.donateExpanded) {
+      return (
+        <div id="donate_box">
+          <div style={{'width': '90%', 'height': '100%', 'display': 'flex', 'flex-direction': 'column', 'justify-content': 'space-between'}}>
+            <div style={{'width': '100%', 'display': 'flex', 'flex-direction': 'column'}}>
+              <button className="medium_button color_bg_primary" onClick={this.onClick_makeDonation}>Donate!</button>
+              <h3>Amount</h3>
+              <input onChange={this.onInput_donationAmount.bind(this)}/>
+              <h3>Memo</h3>
+              <input onChange={this.onInput_donationMemo.bind(this)}/>
+            </div>
+
+            <button style={{'margin-bottom': '25px'}}>Update Credit Card</button>
+          </div>
         </div>
-        {renderUserStats(this.props.userDonations, this.props.title)}
-        <div className="boundary_line"></div>
-        <div>
-          <h3 className="" style={{'margin-left': '20px'}}>Fund Highlights</h3>
-          <ul>
-            {(this.props.fundType == "community fund") ? renderStatRow(stats.num_recipients, 'recipients') : null}
-            {renderStatRow(stats.num_donors, 'donors')}
-            {renderStatRow('$' + stats.average_donation.toFixed(2), 'average donation')}
-            {renderStatRow2(stats.past_day.num_donations, 'day', stats.past_day.amount)}
-            {renderStatRow2(stats.past_month.num_donations, 'month', stats.past_month.amount)}
-          </ul>
+      );
+    } else {
+      return (
+        <div id="donate_box">
+          <div style={{'width': '90%', 'display': 'flex', 'flex-direction': 'column'}}>
+            <button className="medium_button color_bg_primary" onClick={() => this.setState({donateExpanded: true})}>Donate!</button>
+          </div>
+          {renderUserStats(this.props.userDonations, this.props.title)}
+          <div className="boundary_line"></div>
+          <div>
+            <h3 className="" style={{'margin-left': '20px'}}>Fund Highlights</h3>
+            <ul>
+              {(this.props.fundType == "community fund") ? renderStatRow(stats.num_recipients, 'recipients') : null}
+              {renderStatRow(stats.num_donors, 'donors')}
+              {renderStatRow('$' + stats.average_donation.toFixed(2), 'average donation')}
+              {renderStatRow2(stats.past_day.num_donations, 'day', stats.past_day.amount)}
+              {renderStatRow2(stats.past_month.num_donations, 'month', stats.past_month.amount)}
+            </ul>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 
 

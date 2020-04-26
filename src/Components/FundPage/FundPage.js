@@ -15,6 +15,7 @@ class FundPage extends React.Component {
     return (
       <div id="FundPage">
         <AboutFundSection
+          id={this.props.id}
           title={this.props.title}
           description={this.props.description}
           coverPhoto={this.props.coverPhoto}
@@ -27,6 +28,7 @@ class FundPage extends React.Component {
           transactions={this.props.transactions}
           patrons={this.props.patrons}
           recipients={this.props.recipients}
+          makeDonation={this.props.makeDonation}
         />
 
         <PatronSection
