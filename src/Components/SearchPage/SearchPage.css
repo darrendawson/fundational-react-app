@@ -1,0 +1,50 @@
+#SearchPage {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  width: 1100px;
+  align-self: center;
+  font-size: 0.8em;
+}
+
+.fund_search_listing {
+  border-radius: 7px;
+  margin: 30px;
+  margin-right: 70px;
+  background-color: white;
+  -webkit-box-shadow: 10px 10px 7px 0px rgba(0,0,0,0.12);
+-moz-box-shadow: 10px 10px 7px 0px rgba(0,0,0,0.12);
+box-shadow: 10px 10px 7px 0px rgba(0,0,0,0.12);
+}
+
+.fund_search_listing:hover {
+  cursor: pointer;
+  -webkit-box-shadow: 10px 10px 7px 0px rgba(0,0,0,0.2);
+-moz-box-shadow: 10px 10px 7px 0px rgba(0,0,0,0.2);
+box-shadow: 10px 10px 7px 0px rgba(0,0,0,0.2);
+}
+
+.fund_search_listing .text_container {
+  padding: 10px 25px;
+}
+
+.tag-container {
+  display: flex;
+
+}
+
+span.tag {
+  padding: 4px 6px;
+  border-radius: 6px;
+  margin: 2px 8px;
+}
+
+.cover_photo {
+  height: 150px;
+  width: 100%;
+}
+
+#FundSearchResults {
+  margin-top: 30px;
+  align-items: center;
+}

@@ -8,7 +8,7 @@ import FirebaseApp from './Components/FirebaseTest/FirebaseApp.js';
 import Navbar from './Components/Navbar/Navbar.js';
 import FundPage from './Components/FundPage/FundPage.js';
 import ProfilePage from './Components/ProfilePage/ProfilePage.js';
-
+import SearchPage from './Components/SearchPage/SearchPage.js';
 
 class App extends React.Component {
 
@@ -20,11 +20,21 @@ class App extends React.Component {
       users: fakeData.getUsers(),
       transactions: fakeData.getTransactions(),
 
-      selectedPage: 'user', // <- user, fund
-      selectedUserID: 'test'
+      selectedPage: 'search', // <- user, fund
+      selectedUserID: 'test',
+      selectedFund: false
     };
   }
 
+  // onClick and page navigation -----------------------------------------------
+
+  onClick_selectPage = (pageID) => {
+    this.setState({selectedPage: pageID});
+  }
+
+  onClick_selectFund = (fundID) => {
+    this.setState({selectedFund: fundID});
+  }
 
   // Processing ----------------------------------------------------------------
 
@@ -152,24 +162,22 @@ class App extends React.Component {
 
 
   renderFundPage = () => {
-    let fundIDs = Object.keys(this.state.funds);
-    let fundID = fundIDs[1];
-    let fund = this.state.funds[fundID]; // <- MODIFY THIS TO GET THE SELECTED FUND
-    let fundTransactions = this.getAllTransactionsByReceiver(fundID);
+    let fund = this.state.funds[this.state.selectedFund]; 
+    let fundTransactions = this.getAllTransactionsByReceiver(fund.id);
     return (
       <FundPage
         title={fund.title}
         description={fund.description}
         coverPhoto={fund.cover_photo_url}
         fundType={fund.fund_type}
-        atAGlanceStats={this.getAtAGlanceStatsForFund(fundID)}
-        userDonations={this.getTransactionsBySenderAndReceiver(this.state.selectedUserID, fundID)}
+        atAGlanceStats={this.getAtAGlanceStatsForFund(fund.id)}
+        userDonations={this.getTransactionsBySenderAndReceiver(this.state.selectedUserID, fund.id)}
         address={fund.address}
         tags={fund.tags}
         fundOwner={this.state.users[fund.owner_user]}
         transactions={fundTransactions}
         patrons={this.getPatronsFromTransactions(fundTransactions)}
-        recipients={this.getRecipientsOfFund(fundID)}
+        recipients={this.getRecipientsOfFund(fund.id)}
       />
     );
   }
@@ -192,12 +200,24 @@ class App extends React.Component {
   }
 
 
+  renderSearchPage = () => {
+    return (
+      <SearchPage
+        funds={this.state.funds}
+        selectFund={this.onClick_selectFund}
+        selectPage={this.onClick_selectPage}
+      />
+    );
+  }
+
   // MODIFY THIS FUNCTION TO USE THE RIGHT STATE
   renderPage = () => {
     if (this.state.selectedPage == 'user') {
       return this.renderUserProfilePage();
     } else if (this.state.selectedPage == 'fund') {
       return this.renderFundPage();
+    } else if (this.state.selectedPage == 'search') {
+      return this.renderSearchPage();
     } else {
       return (
         <FirebaseApp/>
