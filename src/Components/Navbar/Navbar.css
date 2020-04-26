@@ -22,3 +22,7 @@
 #Navbar .links_container {
   display: flex;
 }
+
+#Navbar #heart_icon {
+  font-size: 0.8em;
+}
