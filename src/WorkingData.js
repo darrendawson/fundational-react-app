@@ -625,7 +625,15 @@ class WorkingData {
     let communityFund = {'transactions': {}, 'recipients': {}};
 
     for (let i = 0; i < this.__getRandomInt(15, 100); i++) {
-      let user = this.getRandomUser();
+      let user;
+      if (i == 0) {
+        user = this.getUser('test');
+        if (Object.keys(user.messages.responses).length > 2) {
+          user = this.getRandomUser();
+        }
+      } else {
+        user = this.getRandomUser();
+      }
       this.users[user.id]['get_from'][fundID] = true;
       let transactionID = this.createCommunityFundTransaction(fundID, user.id);
       communityFund['transactions'][transactionID] = true;

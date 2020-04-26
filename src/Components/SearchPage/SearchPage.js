@@ -79,6 +79,7 @@ class SearchPage extends React.Component {
           <img id="img" src={fund.cover_photo_url}/>
           <h3>{fund.title}</h3>
           <p className="color_txt_not_focus">{fund.address}</p>
+          <p className="color_txt_not_focus">{fund.fund_type}</p>
         </div>
       );
       i += 1;
