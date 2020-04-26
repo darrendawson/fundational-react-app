@@ -9,15 +9,25 @@ class ProfilePage extends React.Component {
   }
 
 
+  // sort these by date values
   getAllTransactionIDs = () => {
     let ids = [];
     for (let key in this.props.transactionIDsGainMoney) {
-      ids.push(key);
+      ids.push({id: key, date: this.props.transactions[key]['date']});
     }
     for (let key in this.props.transactionIDsLoseMoney) {
-      ids.push(key);
+      ids.push({id: key, date: this.props.transactions[key]['date']});
     }
-    return ids;
+
+    ids.sort(function(first, second) {
+      return second.date - first.date;
+    });
+
+    let justIDs = [];
+    for (let i = 0; i < ids.length; i++) {
+      justIDs.push(ids[i]['id']);
+    }
+    return justIDs;
   }
 
   renderTransactions = () => {
