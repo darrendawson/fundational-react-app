@@ -13,25 +13,160 @@ class App extends React.Component {
     super();
     let fakeData = new WorkingData();
     this.state = {
-      funds: fakeData.getFunds()
+      funds: fakeData.getFunds(),
+      users: fakeData.getUsers(),
+      transactions: fakeData.getTransactions(),
+
+      selectedUserID: 1
     };
   }
 
+
+  // Processing ----------------------------------------------------------------
+
+  // both times are unix epoch times (in milliseconds)
+  // time1 is supposed to be larger than time2
+  checkIfInLastDay = (time1, time2) => {
+    if ((time1 - time2) <= (1000 * 60 * 60 * 24)) {
+      return true;
+    }
+    return false;
+  }
+
+  checkIfInLastMonth = (time1, time2) => {
+    if ((time1 - time2) <= (1000 * 60 * 60 * 24 * 31)) {
+      return true;
+    }
+    return false;
+  }
+
+
+
+  // also converts transactions from a dict to a list
+  getAllTransactionsByReceiver = (receiverID) => {
+    let transactions = [];
+    for (let transactionID in this.state.transactions) {
+      if (this.state.transactions[transactionID]['receiver_id'] == receiverID) {
+        transactions.push(this.state.transactions[transactionID]);
+      }
+    }
+    return transactions;
+  }
+
+  // generates
+  getPatronsFromTransactions = (transactions) => {
+    let patronLookup = {};
+    let patrons = [];
+    for (let i = 0; i < transactions.length; i++) {
+      let senderID = transactions[i]['sender_id'];
+      if (senderID in patronLookup) {
+        patronLookup[senderID]['amount']        += transactions[i]['amount'];
+        patronLookup[senderID]['num_donations'] += 1;
+      } else {
+        let userInfo = this.state.users[senderID];
+        patronLookup[senderID] = {};
+        patronLookup[senderID]['amount']            = transactions[i]['amount'];
+        patronLookup[senderID]['num_donations']     = 1;
+        patronLookup[senderID]['id']                = senderID;
+        patronLookup[senderID]['name']              = userInfo['name'];
+        patronLookup[senderID]['profile_photo_url'] = userInfo['profile_photo_url'];
+        patronLookup[senderID]['location']          = userInfo['location'];
+      }
+    }
+
+    // reduce lookup into list
+    for (let patronID in patronLookup) {
+      patrons.push(patronLookup[patronID]);
+    }
+    return patrons;
+  }
+
+
+  // rendered in the "Donate!" box in <AboutFundSection/>
+  getAtAGlanceStatsForFund = (fundID) => {
+
+    // use fundID to get a list of all transactions, patrons, and recipients
+    let transactions = this.getAllTransactionsByReceiver(fundID);
+    let patrons = this.getPatronsFromTransactions(transactions);
+    let recipients = this.getRecipientsOfFund(fundID);
+
+    // return stats
+    let stats = {};
+    stats['num_recipients'] = recipients.length;
+    stats['num_donors'] = patrons.length;
+    stats['num_donations'] = transactions.length;
+    stats['average_donation'] = 0;
+    stats['past_day'] = {'num_donations': 0, 'amount': 0};
+    stats['past_month'] = {'num_donations': 0, 'amount': 0};
+
+    if (transactions.length > 0) {
+      let currentDate = Date.now();
+      for (let i = 0; i < transactions.length; i++) {
+        stats['average_donation'] += transactions[i]['amount'];
+        if (this.checkIfInLastDay(currentDate, transactions[i]['date'])) {
+          stats['past_day']['num_donations'] += 1;
+          stats['past_day']['amount'] += transactions[i]['amount'];
+        }
+
+        if (this.checkIfInLastMonth(currentDate, transactions[i]['date'])) {
+          stats['past_month']['num_donations'] += 1;
+          stats['past_month']['amount'] += transactions[i]['amount'];
+        }
+      }
+      stats['average_donation'] = stats['average_donation'] / transactions.length;
+    }
+
+    return stats;
+  }
+
+  getTransactionsBySenderAndReceiver = (senderID, receiverID, transactions = this.state.transactions) => {
+    let donations = [];
+    for (let transactionID in transactions) {
+      if ((transactions[transactionID]['sender_id'] == senderID) && (transactions[transactionID]['receiver_id']) == receiverID) {
+        donations.push(transactions[transactionID]);
+      }
+    }
+    return donations;
+  }
+
+
+  // goes over all users and returns those that get money from a member of a community fund
+  getRecipientsOfFund = (fundID) => {
+    let users = [];
+    for (let userID in this.state.users) {
+      console.log(this.state.users[userID]);
+      if (this.state.users[userID]['get_from'].length > 0) {
+        if (this.state.users[userID]['get_from'].indexOf(fundID) >= 0) {
+          users.push(this.state.users[userID]);
+        }
+      }
+
+    }
+    return users;
+  }
+
+  // Render --------------------------------------------------------------------
+
+
   renderFundPage = () => {
-    let fund = this.state.funds[0]; // <- MODIFY THIS TO GET THE SELECTED FUND
+    let fundIDs = Object.keys(this.state.funds);
+    let fundID = fundIDs[1];
+    let fund = this.state.funds[fundID]; // <- MODIFY THIS TO GET THE SELECTED FUND
+    let fundTransactions = this.getAllTransactionsByReceiver(fundID);
     return (
       <FundPage
         title={fund.title}
         description={fund.description}
         coverPhoto={fund.cover_photo_url}
         fundType={fund.fund_type}
-        atAGlanceStats={fund.at_a_glance_stats}
-        userDonations={fund.user_donations}
+        atAGlanceStats={this.getAtAGlanceStatsForFund(fundID)}
+        userDonations={this.getTransactionsBySenderAndReceiver(this.state.selectedUserID, fundID)}
         address={fund.address}
         tags={fund.tags}
-        fundOwner={fund.owner_user}
-        transactions={fund.transactions}
-        patrons={fund.patrons}
+        fundOwner={this.state.users[fund.owner_user]}
+        transactions={fundTransactions}
+        patrons={this.getPatronsFromTransactions(fundTransactions)}
+        recipients={this.getRecipientsOfFund(fundID)}
       />
     );
   }

@@ -37,8 +37,9 @@ let __locations = [
 
 class WorkingData {
   constructor() {
-    this.funds = [];
-    this.users = [];
+    this.funds = {};
+    this.users = {};
+    this.transactions = {};
     this.seedUsers(); // <- make sure to seed users before funds
     this.seedFunds();
   }
@@ -49,6 +50,14 @@ class WorkingData {
 
   getUsers() {
     return this.users;
+  }
+
+  getTransactions() {
+    return this.transactions;
+  }
+
+  getUser(userID) {
+    return this.users[userID];
   }
   __getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -94,27 +103,48 @@ class WorkingData {
     let i = this.__getRandomInt(0, items.length - 1);
     return items[i];
   }
+
+  // gets a random String to act as a unique key
+  getNewUniqueID() {
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let newID = "";
+    for (let i = 0; i < 10; i++) {
+      newID += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return newID;
+  }
+
+
   // Users ---------------------------------------------------------------------
 
   getRandomUser() {
-    let i = this.__getRandomInt(0, this.users.length - 1);
-    return this.users[i];
+    let keys = Object.keys(this.users);
+    let i = this.__getRandomInt(0, keys.length - 1);
+    let userID = keys[i];
+    return this.users[userID];
   }
 
   // profile_photo_url: 'https://picsum.photos/300/300' - always returns the same photo
-  createUser() {
-    let i = this.__getRandomInt(1, 100);
-    this.users.push({
-      id: this.users.length + 1,
+  createUser(id = false) {
+    if (id == false) {
+      id = this.getNewUniqueID();
+    }
+    this.users[id] = {
+      id: id,
       name: this.__getRandomName(),
-      profile_photo_url: 'https://i.picsum.photos/id/' + i + '/300/300.jpg',
+      profile_photo_url: 'https://i.picsum.photos/id/' + this.__getRandomInt(1, 100) + '/300/300.jpg',
       occupation: this.__getRandomOccupation(),
-      location: this.__getRandomItem(__locations)
-    });
+      location: this.__getRandomItem(__locations),
+      get_from: [], // <- a list of fund IDs that the user collects money from, is empty for people who aren't subscribed to a community fund
+      control: [], // <- list of business IDs that the user controls
+      advocate_id: false // <- their advocate account
+      // note: messages is not currently implemented here
+    };
   }
 
 
   seedUsers() {
+    this.createUser('test');
     for (let i = 1; i < 2000; i++) {
       this.createUser();
     }
@@ -124,30 +154,13 @@ class WorkingData {
   // funds ---------------------------------------------------------------------
 
 
-
-
-  getUserDonationsToFund() {
-
-    let getDonation = () => {
-      return {
-        'amount': this.__getRandomDouble(5, 100)
-      };
-    };
-
-    let stats = [];
-    for (let i = 0; i < this.__getRandomInt(0, 10); i++) {
-      stats.push(getDonation());
-    }
-    return stats;
-  }
-
-
-  getTransactionsForFund(fundID) {
+  createTransactions(fundID) {
     let transactions = [];
 
     for (let i = 0; i < this.__getRandomInt(20, 2000); i++) {
       let user = this.getRandomUser();
       transactions.push({
+        id: this.getNewUniqueID(),
         sender_id: user.id,
         receiver_id: fundID,
         sender_name: user.name,
@@ -158,88 +171,61 @@ class WorkingData {
         date: this.__getRandomDate(0, 60)
       });
     }
+
+    // make a donation a donation for a specific user
+    let user = this.getUser('test');
+    transactions.push({
+      id: this.getNewUniqueID(),
+      sender_id: user.id,
+      receiver_id: fundID,
+      sender_name: user.name,
+      profile_photo_url: user.profile_photo_url,
+      location: user.location,
+      amount: this.__getRandomDouble(5, 400),
+      memo: this.__getRandomText(),
+      date: this.__getRandomDate(0, 60)
+    });
+
+    for (let i = 0; i < transactions.length; i++) {
+      let transactionID = Object.keys(this.transactions).length;
+      this.transactions[transactionID] = transactions[i];
+    }
     return transactions;
   }
 
-  // returns stats about a fund's transactions
-  getFundSnapshotStats(transactions, patrons, recipients = []) {
-    let stats = {};
-    stats['num_recipients'] = recipients.length;
-    stats['num_donors'] = patrons.length;
-    stats['average_donation'] = 0;
-    if (transactions.length > 0) {
-      for (let i = 0; i < transactions.length; i++) {
-        stats['average_donation'] += transactions[i]['amount']
-      }
-      stats['average_donation'] = stats['average_donation'] / transactions.length;
-    }
-    stats['past_day'] = {'num_donations': this.__getRandomInt(2, 30), 'amount': this.__getRandomDouble(30, 200)};
-    stats['past_month'] = {'num_donations': this.__getRandomInt(30, 100), 'amount': this.__getRandomDouble(500, 2100)}
-    return stats;
-  }
 
 
-  getPatronsOfFund(transactions) {
-    let patrons = []
-    let patronLookup = {};
-    for (let i = 0; i < transactions.length; i++) {
-      let userID = transactions[i]['sender_id'];
-      if (userID in patronLookup) {
-        patronLookup[userID]['amount']        += transactions[i]['amount'];
-        patronLookup[userID]['num_donations'] += 1;
-      } else {
-        patronLookup[userID] = {}
-        patronLookup[userID]['amount']            = transactions[i]['amount'];
-        patronLookup[userID]['num_donations']     = 1;
-        patronLookup[userID]['id']                = userID;
-        patronLookup[userID]['name']              = transactions[i]['sender_name'];
-        patronLookup[userID]['profile_photo_url'] = transactions[i]['profile_photo_url'];
-        patronLookup[userID]['location']          = transactions[i]['location'];
-      }
-    }
-
-    // convert lookup of patrons to list
-    for (let key in patronLookup) {
-      patrons.push(patronLookup[key]);
-    }
-    return patrons;
-  }
-
-
-  getRecipientsOfFund() {
-    let recipients = [];
-    for (let i = 0; i < this.__getRandomInt(15, 1200); i++) {
+  createFundRecipients(fundID) {
+    for (let i = 0; i < this.__getRandomInt(15, 100); i++) {
       let user = this.getRandomUser();
-      recipients.push({
-        id: user.id,
-        name: user.name,
-        profile_photo_url: user.profile_photo_url,
-        occupation: user.occupation
-      });
+      if (user.get_from.indexOf(fundID) < 0) {
+        this.users[user.id]['get_from'].push(fundID);
+      }
     }
-    return recipients;
   }
 
   // creates an object representing a fund
   createFund(title, fundType, tags, address) {
-    let id = this.funds.length + 1;
-    let transactions = this.getTransactionsForFund(id);
-    let patrons = this.getPatronsOfFund(transactions);
-    let recipients = this.getRecipientsOfFund();
-    this.funds.push({
+    let id = this.getNewUniqueID();
+    this.createTransactions(id);
+    this.createFundRecipients(id);
+
+    // assign an owner
+    let owner = this.getRandomUser();
+
+
+    this.funds[id] = {
       id: id,
       title: title,
       description: this.__getRandomText(),
-      cover_photo_url: 'https://i.picsum.photos/id/' + id + '/' + window.innerWidth + '/350.jpg',
+      cover_photo_url: 'https://i.picsum.photos/id/' + this.__getRandomInt(1, 100) + '/' + window.innerWidth + '/350.jpg',
       fund_type: fundType,
-      at_a_glance_stats: this.getFundSnapshotStats(transactions, patrons, recipients),
-      user_donations: this.getUserDonationsToFund(),
       tags: tags,
       address: address,
-      owner_user: this.getRandomUser(),
-      transactions: transactions,
-      patrons: patrons
-    });
+      owner_user: owner.id,
+      // updates is missing
+      // messages are missing 
+    };
   }
 
   // initializes the dataset with funds

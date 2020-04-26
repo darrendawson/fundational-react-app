@@ -26,6 +26,7 @@ class FundPage extends React.Component {
           fundOwner={this.props.fundOwner}
           transactions={this.props.transactions}
           patrons={this.props.patrons}
+          recipients={this.props.recipients}
         />
 
         <PatronSection
