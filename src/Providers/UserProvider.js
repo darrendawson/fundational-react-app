@@ -23,6 +23,13 @@ class UserProvider extends Component {
       var that = this;
       firebase.database().ref('users/' + userAuth.uid).once('value').then(function(snapshot) {
         user = snapshot.val();
+        if(user == null) {
+          console.log("create a new user");
+          user = {
+            displayName: "",
+            profileIcon: "",
+          }
+        }
         that.setState({ authUser: userAuth, user: user });
       })
     });

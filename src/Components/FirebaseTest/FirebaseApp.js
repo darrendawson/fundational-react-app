@@ -10,12 +10,17 @@ class FirebaseApp extends React.Component {
     super();
     this.state = {
       user: null,
-      username: ""
+      username: "",
+      users: [],
+      transactions: [],
+      businesses: [],
+      formData: {},
     };
 
-    this.testSubmit = this.testSubmit.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.updateInput = this.updateInput.bind(this);
+    this.pushTransaction = this.pushTransaction.bind(this);
   }
 
   logout() {
@@ -35,6 +40,33 @@ class FirebaseApp extends React.Component {
     });
   }
 
+  firebaseUserToState(id, user) {
+    return {
+      id: id,
+      displayName: user.displayName,
+      profileIcon: user.profileIcon,
+
+    };
+  }
+
+  firebaseTransactionToState(id, transaction) {
+    return {
+      id: id,
+      from: transaction.from,
+      to: transaction.to,
+      money: transaction.money,
+      date: transaction.date,
+      state: transaction.state
+    };
+  }
+
+  firebaseBusinessToState(id, business) {
+    return {
+      id: id,
+      displayName: business.displayName
+    };
+  }
+
   componentDidMount() {
     auth.onAuthStateChanged((user) => {
       if(user) {
@@ -42,33 +74,69 @@ class FirebaseApp extends React.Component {
       }
     });
 
-    const itemsRef = firebase.database().ref('items');
-    itemsRef.on('value', (snapshot) => {
-      let items = snapshot.val();
-      let newState = [];
-      for (let item in items) {
-        newState.push({
-          id: item,
-          title: items[item].title,
-          user: items[item].user
-        });
+    const usersRef = firebase.database().ref('users');
+    usersRef.on('value', (snapshot) => {
+      let users = snapshot.val();
+      let state = [];
+      for (let key in users) {
+        state.push(this.firebaseUserToState(key, users[key]));
       }
-      this.setState({
-        items: newState
-      });
+
+      this.setState({users: state});
+    });
+
+    const transactionsRef = firebase.database().ref('transactions');
+    transactionsRef.on('value', (snapshot) => {
+      let transactions = snapshot.val();
+      let state = [];
+      for (let key in transactions) {
+        state.push(this.firebaseTransactionToState(key, transactions[key]));
+      }
+
+      this.setState({transactions: state});
+    });
+
+    const businessesRef = firebase.database().ref('businesses');
+    businessesRef.on('value', (snapshot) => {
+      let businesses = snapshot.val();
+      let state = [];
+      for (let key in businesses) {
+        state.push(this.firebaseBusinessToState(key, businesses[key]));
+      }
+
+      this.setState({businesses: state});
     });
   }
 
-
-  testSubmit(e) {
-    e.preventDefault();
-    const ownersRef = firebase.database().ref('owners');
-    const owner = {
-      owner: "ciceros",
-      img: "invalid image"
+  pushTransaction(e) {
+    if(this.state.formData["tf-from"] === undefined || this.state.formData["tf-to"] === undefined) {
+      // should pop up an error
+      return;
     }
-    ownersRef.push(owner);
-    console.log("this is a test");
+
+    const transactionsRef = firebase.database().ref('transactions');
+    var transaction = {
+      from: {
+        accountType: "",
+        id: this.state.formData["tf-from"],
+        memo: this.state.formData["tf-message"]
+      },
+      to: {
+        accountType: "",
+        id: this.state.formData["tf-from"],
+        memo: ""
+      },
+      money: this.state.formData["tf-amount"],
+      date: new Date().getTime() / 1000,
+      state: "pending"
+    };
+    transactionsRef.push(transaction);
+  }
+
+  updateInput(e) {
+    let newFormData = this.state.formData;
+    newFormData[e.target.id] = e.target.value;
+    this.setState({"formData": newFormData});
   }
 
   render() {
@@ -83,7 +151,38 @@ class FirebaseApp extends React.Component {
             }
           </div>
 
-          <button onClick={this.testSubmit}>this is a test</button>
+          <div id="TestTransactionForm">
+            <h3>Create a Transaction</h3>
+            <select onChange={this.updateInput} id="tf-from" name="from">
+              <option disabled selected value>select user</option>
+              { this.state.users.map((user) => {
+                return (<option value={user.id}>{user.displayName}</option>);
+              })}
+            </select>
+            <select onChange={this.updateInput} id="tf-to" name="to">
+              <option disabled selected value>select receiver</option>
+              { this.state.businesses.map((business, key) => {
+                return (<option value={business.id}>{business.displayName}</option>);
+              })}
+            </select>
+            <div style={{display: "flex"}}>
+              <input onChange={this.updateInput} id="tf-amount" placeholder="Amount" type="number" />
+              <input onChange={this.updateInput} id="tf-message" style={{flex: 1}} placeholder="Message" type="text" />
+            </div>
+            <button onClick={this.pushTransaction}>Create</button>
+          </div>
+
+          <h3>Transactions</h3>
+          <ul id="TransactionsList">
+            { this.state.transactions.map((transaction) => {
+              return (
+                <li>
+                  {transaction.state}, {transaction.from.memo}
+                </li>
+              );
+            })}
+          </ul>
+
           <UserPage />
         </div>
       </UserProvider>
