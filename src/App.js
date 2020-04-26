@@ -4,6 +4,8 @@ import './App.css';
 
 import WorkingData from './WorkingData.js';
 
+import FirebaseApp from './Components/FirebaseTest/FirebaseApp.js';
+
 import Navbar from './Components/Navbar/Navbar.js';
 import FundPage from './Components/FundPage/FundPage.js';
 
@@ -17,7 +19,7 @@ class App extends React.Component {
       users: fakeData.getUsers(),
       transactions: fakeData.getTransactions(),
 
-      selectedUserID: 1
+      selectedUserID: 'test'
     };
   }
 
@@ -174,7 +176,13 @@ class App extends React.Component {
 
   // MODIFY THIS FUNCTION TO USE THE RIGHT STATE
   renderPage = () => {
-    return this.renderFundPage();
+    if (true) {
+      return this.renderFundPage();
+    } else {
+      return (
+        <FirebaseApp/>
+      );
+    }
   }
 
   render() {

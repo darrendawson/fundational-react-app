@@ -33,6 +33,8 @@ let __locations = [
 ];
 
 
+let __bannedPhotos = [86, 97, 105, 138, 148, 150]; // images that error on lorem picsum
+
 // Working Data Class ----------------------------------------------------------
 
 class WorkingData {
@@ -115,6 +117,15 @@ class WorkingData {
   }
 
 
+  __getRandomPhoto(x = '300', y = '300') {
+    let photoID = this.__getRandomInt(1,149);
+    if (__bannedPhotos.indexOf(photoID) >= 0) {
+      photoID += 1;
+    }
+    return 'https://i.picsum.photos/id/' + photoID + '/' + x + '/' + y + '.jpg';
+  }
+
+
   // Users ---------------------------------------------------------------------
 
   getRandomUser() {
@@ -132,7 +143,7 @@ class WorkingData {
     this.users[id] = {
       id: id,
       name: this.__getRandomName(),
-      profile_photo_url: 'https://i.picsum.photos/id/' + this.__getRandomInt(1, 100) + '/300/300.jpg',
+      profile_photo_url: this.__getRandomPhoto(300, 300),
       occupation: this.__getRandomOccupation(),
       location: this.__getRandomItem(__locations),
       get_from: [], // <- a list of fund IDs that the user collects money from, is empty for people who aren't subscribed to a community fund
@@ -218,13 +229,13 @@ class WorkingData {
       id: id,
       title: title,
       description: this.__getRandomText(),
-      cover_photo_url: 'https://i.picsum.photos/id/' + this.__getRandomInt(1, 100) + '/' + window.innerWidth + '/350.jpg',
+      cover_photo_url: this.__getRandomPhoto(window.innerWidth, 350),
       fund_type: fundType,
       tags: tags,
       address: address,
       owner_user: owner.id,
       // updates is missing
-      // messages are missing 
+      // messages are missing
     };
   }
 
