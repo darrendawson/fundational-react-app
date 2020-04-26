@@ -85,9 +85,9 @@ class AboutFundSection extends React.Component {
   renderTags = () => {
 
     let tagsToRender = [];
-    for (let i = 0; i < this.props.tags.length; i++) {
+    for (let tag in this.props.tags) {
       tagsToRender.push(
-        <div id="tag" className="color_bg_primary_light">{this.props.tags[i]}</div>
+        <div id="tag" className="color_bg_primary_light">{tag}</div>
       );
     }
     return (
