@@ -165,21 +165,20 @@ class WorkingData {
   // funds ---------------------------------------------------------------------
 
 
-  createTransactions(fundID) {
+  createTransactions(fundID, fundType) {
     let transactions = [];
 
     for (let i = 0; i < this.__getRandomInt(20, 2000); i++) {
       let user = this.getRandomUser();
+      let responseMemo = (this.__getRandomInt(1, 10) > 7) ? this.__getRandomText() : "";
       transactions.push({
         id: this.getNewUniqueID(),
-        sender_id: user.id,
-        receiver_id: fundID,
-        sender_name: user.name,
-        profile_photo_url: user.profile_photo_url,
-        location: user.location,
+        destination: {id: fundID, account_type: fundType, memo: responseMemo},
+        origin: {id: user.id, account_type: 'user', memo: this.__getRandomText()},
         amount: this.__getRandomDouble(5, 400),
         memo: this.__getRandomText(),
-        date: this.__getRandomDate(0, 60)
+        date: this.__getRandomDate(0, 60),
+        status: 'accepted'
       });
     }
 
@@ -187,14 +186,12 @@ class WorkingData {
     let user = this.getUser('test');
     transactions.push({
       id: this.getNewUniqueID(),
-      sender_id: user.id,
-      receiver_id: fundID,
-      sender_name: user.name,
-      profile_photo_url: user.profile_photo_url,
-      location: user.location,
+      origin: {id: user.id, account_type: 'user', memo: this.__getRandomText()},
+      destination: {id: fundID, account_type: fundType, memo: this.__getRandomText()},
       amount: this.__getRandomDouble(5, 400),
       memo: this.__getRandomText(),
-      date: this.__getRandomDate(0, 60)
+      date: this.__getRandomDate(0, 60),
+      status: 'accepted'
     });
 
     for (let i = 0; i < transactions.length; i++) {
@@ -215,15 +212,28 @@ class WorkingData {
     }
   }
 
+  createUpdates() {
+    let updates = [];
+    for (let i = 0; i < this.__getRandomInt(1, 10); i++) {
+      updates.push({
+        text: this.__getRandomText(),
+        image: this.__getRandomPhoto(600, 270),
+        date: this.__getRandomDate()
+      });
+    }
+    return updates;
+  }
+
+
   // creates an object representing a fund
-  createFund(title, fundType, tags, address) {
+  createFund(title, tags, address) {
     let id = this.getNewUniqueID();
-    this.createTransactions(id);
+    let fundType = (this.__getRandomInt(1, 10) > 5) ? "community fund" : "business";
+    this.createTransactions(id, fundType);
     this.createFundRecipients(id);
 
     // assign an owner
     let owner = this.getRandomUser();
-
 
     this.funds[id] = {
       id: id,
@@ -234,15 +244,15 @@ class WorkingData {
       tags: tags,
       address: address,
       owner_user: owner.id,
-      // updates is missing
+      updates: this.createUpdates()
       // messages are missing
     };
   }
 
   // initializes the dataset with funds
   seedFunds() {
-    this.createFund('Ciceros Pizza', 'business', ['restaurant', 'pizza'], 'San Jose, California');
-    this.createFund('El Camino Hospital Worker Relief', 'community fund',  ['medical'], 'Mountain View, California');
+    this.createFund('Ciceros Pizza', ['restaurant', 'pizza'], 'San Jose, California');
+    this.createFund('El Camino Hospital Worker Relief', ['medical'], 'Mountain View, California');
   }
 }
 

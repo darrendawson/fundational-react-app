@@ -19,7 +19,7 @@ class PatronSection extends React.Component {
   getTransactionsForPatron = (id) => {
     let patronTransactions = [];
     for (let i = 0; i < this.props.transactions.length; i++) {
-      if (this.props.transactions[i]['sender_id'] == id) {
+      if (this.props.transactions[i]['origin']['id'] == id) {
         patronTransactions.push(this.props.transactions[i]);
       }
     }
@@ -91,7 +91,7 @@ class PatronSection extends React.Component {
     let memo = "...";
     let date = "...";
     if (transactions.length > 0) {
-      memo = transactions[0]['memo'];
+      memo = transactions[0]['origin']['memo'];
       date = new Date(transactions[0]['date']);
       date = (date.getMonth() + 1) + "/" + (date.getDay() + 1) + "/" + date.getFullYear();
     }

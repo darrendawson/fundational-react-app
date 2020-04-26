@@ -48,7 +48,7 @@ class App extends React.Component {
   getAllTransactionsByReceiver = (receiverID) => {
     let transactions = [];
     for (let transactionID in this.state.transactions) {
-      if (this.state.transactions[transactionID]['receiver_id'] == receiverID) {
+      if (this.state.transactions[transactionID]['destination']['id'] == receiverID) {
         transactions.push(this.state.transactions[transactionID]);
       }
     }
@@ -60,7 +60,7 @@ class App extends React.Component {
     let patronLookup = {};
     let patrons = [];
     for (let i = 0; i < transactions.length; i++) {
-      let senderID = transactions[i]['sender_id'];
+      let senderID = transactions[i]['origin']['id'];
       if (senderID in patronLookup) {
         patronLookup[senderID]['amount']        += transactions[i]['amount'];
         patronLookup[senderID]['num_donations'] += 1;
@@ -124,7 +124,7 @@ class App extends React.Component {
   getTransactionsBySenderAndReceiver = (senderID, receiverID, transactions = this.state.transactions) => {
     let donations = [];
     for (let transactionID in transactions) {
-      if ((transactions[transactionID]['sender_id'] == senderID) && (transactions[transactionID]['receiver_id']) == receiverID) {
+      if ((transactions[transactionID]['origin']['id'] == senderID) && (transactions[transactionID]['destination']['id']) == receiverID) {
         donations.push(transactions[transactionID]);
       }
     }
